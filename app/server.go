@@ -3,23 +3,53 @@ package main
 import (
 	"fmt"
 	"net"
-	"os"
+	"log"
 )
 
-func main() {
-	// You can use print statements as follows for debugging, they'll be visible when running tests.
-	fmt.Println("Starting a tcp server at 0.0.0.0:6379")
+const HOST = "127.0.0.1"
+const PORT = "6379"
 
-	// Uncomment this block to pass the first stage
-	
-	l, err := net.Listen("tcp", "0.0.0.0:6379")
-	if err != nil {
-		fmt.Println("Failed to bind to port 6379")
-		os.Exit(1)
+
+func main() {
+	server_addr := fmt.Sprintf("%s:%s", HOST, PORT)
+	fmt.Printf("Starting a tcp server at %s \n", server_addr)
+
+	server, err := net.Listen("tcp", server_addr)
+	checkErr(err)
+	defer server.Close()
+
+	for {
+		conn, err := server.Accept()
+		checkErr(err)
+		fmt.Printf("New incoming connection %s \n", conn.RemoteAddr().String())
+		go handleConnection(conn)
 	}
-	_, err = l.Accept()
-	if err != nil {
-		fmt.Println("Error accepting connection: ", err.Error())
-		os.Exit(1)
+}
+
+func handleConnection(conn net.Conn) {
+	addr := conn.RemoteAddr().String()
+	for {
+		reply := make([]byte, 1024)
+		var err error 
+		_, err = conn.Read(reply)
+		checkErr(err)
+		if err != nil {
+			break
+		}
+
+		fmt.Println("Talking to: ", addr)
+		fmt.Println("Received: ", string(reply))
+
+		msg := "+PONG"
+		_, err = conn.Write([]byte(msg))
+		checkErr(err)
+		fmt.Println("Sent back: ", msg)
 	}
+	fmt.Println("Connection closed: ", addr)
+}
+
+func checkErr(err error) {
+    if err != nil {
+        log.Println(err)
+    }
 }
