@@ -78,7 +78,7 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 			msg = "-ERR : Unknow command" + string(command)
 		}
 
-		_, err := conn.Write([]byte(msg))
+		_, err = conn.Write([]byte(msg))
 		utils.CheckErr(err)
 		if err != nil {
 			break
