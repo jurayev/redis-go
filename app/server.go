@@ -2,13 +2,13 @@ package main
 
 import (
 	redis "codecrafters-redis-go/redis"
-	parser "codecrafters-redis-go/parser"
+	_ "codecrafters-redis-go/parser"
 	utils "codecrafters-redis-go/utils"
 	"log"
 	"net"
 	"fmt"
 	str "strings"
-	"bufio"
+	_ "bufio"
 )
 
 const HOST string = "127.0.0.1"
@@ -46,11 +46,12 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 	for {
 		log.Println("Talking to: ", addr)
 
-		data, err := parser.ParseArray(bufio.NewReader(conn))
-		utils.CheckErr(err)
-		if err != nil {
-			break
-		}
+		//data, err := parser.ParseArray(bufio.NewReader(conn))
+		// utils.CheckErr(err)
+		// if err != nil {
+		// 	break
+		// }
+		data := []string{"ping"}
 		log.Printf("Received: %s", data)
 
 		command := str.ToLower(data[0])
@@ -73,7 +74,7 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 			msg = "-ERR : Unknow command" + string(command)
 		}
 
-		_, err = conn.Write([]byte(msg))
+		_, err := conn.Write([]byte(msg))
 		utils.CheckErr(err)
 		if err != nil {
 			break
