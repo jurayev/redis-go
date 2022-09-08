@@ -24,9 +24,6 @@ func main() {
 	handleConnection(conn)
 
 	log.Println("Connection closed")
-	// in := []byte("*5\r\n$3\r\nSET\r\n$3\r\nhey\r\n$3\r\nkey\r\n$2\r\nPX\r\n$4\r\n3600\r\n")
-	// data, _ := parser.ParseArray(in)
-	// fmt.Println(data)
 }
 
 func handleConnection(conn net.Conn) {
