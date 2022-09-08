@@ -20,6 +20,9 @@ func main() {
 
 	server, err := net.Listen("tcp", server_addr)
 	utils.CheckErr(err)
+	if err != nil {
+		log.Fatal("ERROR : Could not start a tcp server")
+	}
 	defer server.Close()
 
 	redis := redis.Redis{
@@ -28,6 +31,9 @@ func main() {
 	for {
 		conn, err := server.Accept()
 		utils.CheckErr(err)
+		if err != nil {
+			continue // ignore the broken connections
+		}
 		log.Printf("New incoming connection %s \n", conn.RemoteAddr().String())
 		go handleConnection(conn, &redis)
 	}
@@ -38,17 +44,7 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 
 	addr := conn.RemoteAddr().String()
 	for {
-		//var reply []byte = []byte{}
-		//_, err := conn.Read(reply)
-		//var b byte = '\n'
-		//reply, _ := readUntilCRLF(bufio.NewReader(conn))
-		// utils.CheckErr(err)
-		// if err != nil {
-		// 	continue
-		// }
-
 		log.Println("Talking to: ", addr)
-		//log.Printf("Received: '%s'", string(reply))
 
 		data, err := parser.ParseArray(bufio.NewReader(conn))
 		utils.CheckErr(err)

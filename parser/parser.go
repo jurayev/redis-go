@@ -2,11 +2,9 @@ package parser
 
 import (
 	e "errors"
-	_ "strings"
 	utils "codecrafters-redis-go/utils"
 	"strconv"
 	"bufio"
-	"fmt"
 )
 
 const ARRAY byte = '*'
@@ -24,15 +22,8 @@ func ParseArray(byteStream *bufio.Reader) ([]string, error) {
 	if bytes[0] != ARRAY {
 		return []string{}, e.New("invalid encoding type. Not an array")
 	}
-	fmt.Println("Bytes", bytes)
 
-	//splitted := str.Split(string(input), "\r\n")
-	
-	//total, _ := strconv.ParseInt(splitted[0][1:], 10, 64)
-
-	//data = append(data, splitted[2])
 	items_count, err := strconv.Atoi(string(bytes[1]))
-	fmt.Println("Items", items_count)
 	utils.CheckErr(err)
 
 	var data []string
@@ -41,7 +32,6 @@ func ParseArray(byteStream *bufio.Reader) ([]string, error) {
 		nextBytes, err := readUntilCRLF(byteStream)
 		utils.CheckErr(err)
 		data = append(data, string(nextBytes))
-		fmt.Println("Str", string(nextBytes))
 	}
 
 	return data, nil
