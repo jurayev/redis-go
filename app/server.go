@@ -8,6 +8,7 @@ import (
 	"net"
 	"fmt"
 	str "strings"
+	"bufio"
 )
 
 const HOST string = "127.0.0.1"
@@ -28,27 +29,35 @@ func main() {
 		conn, err := server.Accept()
 		utils.CheckErr(err)
 		log.Printf("New incoming connection %s \n", conn.RemoteAddr().String())
-		go handleConnection(conn, redis)
+		go handleConnection(conn, &redis)
 	}
 }
 
-func handleConnection(conn net.Conn, redis redis.Redis) {
+func handleConnection(conn net.Conn, redis *redis.Redis) {
 	defer conn.Close()
 
 	addr := conn.RemoteAddr().String()
 	for {
-		reply := []byte{}
-		_, err := conn.Read(reply)
-		utils.CheckErr(err)
-		if err != nil {
-			continue
-		}
+		//var reply []byte = []byte{}
+		//_, err := conn.Read(reply)
+		//var b byte = '\n'
+		//reply, _ := readUntilCRLF(bufio.NewReader(conn))
+		// utils.CheckErr(err)
+		// if err != nil {
+		// 	continue
+		// }
 
 		log.Println("Talking to: ", addr)
-		log.Println("Received: ", string(reply))
+		//log.Printf("Received: '%s'", string(reply))
 
-		data, err := parser.ParseArray(reply)
+		data, err := parser.ParseArray(bufio.NewReader(conn))
 		utils.CheckErr(err)
+		if err != nil && err.Error() == "EOF" {
+			break
+		} else if err != nil {
+			continue
+		}
+		log.Printf("Received: %s", data)
 
 		command := str.ToLower(data[0])
 		var msg string 
