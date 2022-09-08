@@ -10,9 +10,10 @@ import (
 	str "strings"
 	"bufio"
 )
-
-const HOST string = "127.0.0.1"
-const PORT string = "6379"
+const (
+	HOST string = "127.0.0.1"
+	PORT string = "6379"
+)
 
 func main() {
 	server_addr := fmt.Sprintf("%s:%s", HOST, PORT)
