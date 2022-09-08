@@ -51,6 +51,7 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 		// if err != nil {
 		// 	break
 		// }
+		conn.Read([]byte{})
 		data := []string{"ping"}
 		log.Printf("Received: %s", data)
 
