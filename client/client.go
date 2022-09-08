@@ -27,6 +27,10 @@ func main() {
 }
 
 func handleConnection(conn net.Conn) {
+	// msg := "*2\r\n$4\r\nECHO\r\n$4\r\nHello\r\n"
+	// msg := "*2\r\n$3\r\nGET\r\n$4\r\nHello2\r\n"
+	// msg := "*3\r\n$3\r\nSET\r\n$4\r\nHello\r\n$4\r\nWorld\r\n"
+	// msg := "*5\r\n$3\r\nSET\r\n$4\r\nHello1\r\n$4\r\nWorld1\r\n$2\r\nPX\r\n$2\r\n3600\r\n"
 	log.Println("Send command? Y/N")
 	var err error
 	for {
@@ -37,10 +41,6 @@ func handleConnection(conn net.Conn) {
 			break
 		}
 		msg := "*1\r\n$4\r\nPING\r\n"
-		// msg := "*2\r\n$4\r\nECHO\r\n$4\r\nHello\r\n"
-		// msg := "*2\r\n$3\r\nGET\r\n$4\r\nHello2\r\n"
-		// msg := "*3\r\n$3\r\nSET\r\n$4\r\nHello\r\n$4\r\nWorld\r\n"
-		// msg := "*5\r\n$3\r\nSET\r\n$4\r\nHello1\r\n$4\r\nWorld1\r\n$2\r\nPX\r\n$2\r\n3600\r\n"
 		_, err = conn.Write([]byte(msg))
 		log.Println("Send:", msg)
 		checkErr(err)
