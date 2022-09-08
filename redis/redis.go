@@ -23,10 +23,10 @@ func (r *Redis) Get(key string) (string, error) {
 	pair, exists := r.Storage[key]
 	var r_value string
 	if !exists {
-		r_value = "-1"
+		r_value = "$-1"
 	} else if pair.Expiry != -1 && time.Now().UTC().Nanosecond() > pair.Expiry {
 		delete(r.Storage, key)
-		r_value =  "-1"
+		r_value =  "$-1"
 	} else {
 		r_value = "+" + pair.Value
 	}
