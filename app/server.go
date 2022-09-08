@@ -34,14 +34,14 @@ func main() {
 
 func handleConnection(conn net.Conn, redis redis.Redis) {
 	defer conn.Close()
-	
+
 	addr := conn.RemoteAddr().String()
 	for {
 		reply := make([]byte, 1024)
 		_, err := conn.Read(reply)
 		utils.CheckErr(err)
 		if err != nil {
-			break
+			continue
 		}
 
 		log.Println("Talking to: ", addr)
