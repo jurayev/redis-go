@@ -35,13 +35,13 @@ func handleConnection(conn net.Conn) {
 	log.Println("Send command? Y/N")
 	var err error
 	for {
-		var input string
+		var input string = "y"
 		_, err = fmt.Scanln(&input)
 		checkErr(err)
 		if str.ToLower(input) != "y" {
 			break
 		}
-		msg := "*5\r\n$3\r\nSET\r\n$4\r\nHello1\r\n$4\r\nWorld1\r\n$2\r\nPX\r\n$2\r\n3600\r\n"
+		msg := "*2\r\n$4\r\nECHO\r\n$4\r\nHello\r\n"
 		_, err = conn.Write([]byte(msg))
 		log.Println("Send:", msg)
 		checkErr(err)
