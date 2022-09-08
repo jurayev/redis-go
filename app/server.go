@@ -51,7 +51,7 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 		// if err != nil {
 		// 	break
 		// }
-		input := make([]byte, 10)
+		input := make([]byte, 20)
 		_, err := conn.Read(input)
 		if err != nil {
 			break
