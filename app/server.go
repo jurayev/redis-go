@@ -33,6 +33,8 @@ func main() {
 }
 
 func handleConnection(conn net.Conn, redis redis.Redis) {
+	defer conn.Close()
+	
 	addr := conn.RemoteAddr().String()
 	for {
 		reply := make([]byte, 1024)
