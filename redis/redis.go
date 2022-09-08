@@ -41,7 +41,7 @@ func (r *Redis) Set(key string, value string, ttl string) (string, error) {
 		if err != nil {
 			return "-ERR : Expiry key is not a valid integer type", nil
 		}
-		expiry = time.Now().UTC().Add(time.Second * time.Duration(expiry_time)).Nanosecond()
+		expiry = time.Now().UTC().Add(time.Millisecond * time.Duration(expiry_time)).Nanosecond()
 		
 	}
 		
