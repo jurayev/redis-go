@@ -52,10 +52,8 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 
 		data, err := parser.ParseArray(bufio.NewReader(conn))
 		utils.CheckErr(err)
-		if err != nil && err.Error() == "EOF" {
+		if err != nil {
 			break
-		} else if err != nil {
-			continue
 		}
 		log.Printf("Received: %s", data)
 
