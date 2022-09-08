@@ -37,7 +37,7 @@ func handleConnection(conn net.Conn, redis redis.Redis) {
 
 	addr := conn.RemoteAddr().String()
 	for {
-		reply := make([]byte, 1024)
+		reply := []byte{}
 		_, err := conn.Read(reply)
 		utils.CheckErr(err)
 		if err != nil {
@@ -72,6 +72,9 @@ func handleConnection(conn net.Conn, redis redis.Redis) {
 
 		_, err = conn.Write([]byte(msg))
 		utils.CheckErr(err)
+		if err != nil {
+			break
+		}
 		log.Println("Sent back: ", msg)
 	}
 	log.Println("Connection closed: ", addr)
