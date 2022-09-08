@@ -1,55 +1,78 @@
 package main
 
 import (
-	"fmt"
-	"net"
+	redis "codecrafters-redis-go/redis"
+	parser "codecrafters-redis-go/parser"
+	utils "codecrafters-redis-go/utils"
 	"log"
+	"net"
+	"fmt"
+	str "strings"
 )
 
-const HOST = "127.0.0.1"
-const PORT = "6379"
-
+const HOST string = "127.0.0.1"
+const PORT string = "6379"
 
 func main() {
 	server_addr := fmt.Sprintf("%s:%s", HOST, PORT)
-	fmt.Printf("Starting a tcp server at %s \n", server_addr)
+	log.Printf("Starting a tcp server at %s \n", server_addr)
 
 	server, err := net.Listen("tcp", server_addr)
-	checkErr(err)
+	utils.CheckErr(err)
 	defer server.Close()
 
+	redis := redis.Redis{
+		Storage: map[string]utils.RedisPair{},
+	}
 	for {
 		conn, err := server.Accept()
-		checkErr(err)
-		fmt.Printf("New incoming connection %s \n", conn.RemoteAddr().String())
-		go handleConnection(conn)
+		utils.CheckErr(err)
+		log.Printf("New incoming connection %s \n", conn.RemoteAddr().String())
+		go handleConnection(conn, redis)
 	}
 }
 
-func handleConnection(conn net.Conn) {
+func handleConnection(conn net.Conn, redis redis.Redis) {
 	addr := conn.RemoteAddr().String()
 	for {
 		reply := make([]byte, 1024)
-		var err error 
-		_, err = conn.Read(reply)
-		checkErr(err)
+		_, err := conn.Read(reply)
+		utils.CheckErr(err)
 		if err != nil {
 			break
 		}
 
-		fmt.Println("Talking to: ", addr)
-		fmt.Println("Received: ", string(reply))
+		log.Println("Talking to: ", addr)
+		log.Println("Received: ", string(reply))
 
-		msg := "+PONG"
+		data, err := parser.ParseArray(reply)
+		utils.CheckErr(err)
+
+		command := str.ToLower(data[0])
+		var msg string 
+		switch command {
+		case "ping":
+			msg, _ = redis.Ping()
+		case "echo":
+			msg, _ = redis.Echo(str.Join(data[1:], " "))
+		case "set":
+			expiry := ""
+			if len(data) > 3 {
+				expiry = data[4]
+			}
+			msg, _ = redis.Set(data[1], data[2], expiry)
+		case "get":
+			msg, _ = redis.Get(data[1])
+		default:
+			log.Println("ERROR - Uknown command:", string(command))
+			msg = "-ERR : Unknow command" + string(command)
+		}
+
 		_, err = conn.Write([]byte(msg))
-		checkErr(err)
-		fmt.Println("Sent back: ", msg)
+		utils.CheckErr(err)
+		log.Println("Sent back: ", msg)
 	}
-	fmt.Println("Connection closed: ", addr)
+	log.Println("Connection closed: ", addr)
 }
 
-func checkErr(err error) {
-    if err != nil {
-        log.Println(err)
-    }
-}
+
