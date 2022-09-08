@@ -76,7 +76,7 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 			msg, _ = redis.Get(data[1])
 		default:
 			log.Println("ERROR - Uknown command:", string(command))
-			msg = "-ERR : Unknow command" + string(command)
+			msg = "-ERR : Unknow command" + string(command) + "\r\n"
 		}
 
 		_, err = conn.Write([]byte(msg))

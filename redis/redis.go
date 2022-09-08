@@ -12,11 +12,11 @@ type Redis struct {
 }
 
 func (r *Redis) Ping() (string, error) {
-	return "+PONG", nil
+	return "+PONG\r\n", nil
 }
 
 func (r *Redis) Echo(s string) (string, error) {
-	return "+" + s, nil
+	return "+" + s + "\r\n", nil
 }
 
 func (r *Redis) Get(key string) (string, error) {
@@ -30,7 +30,7 @@ func (r *Redis) Get(key string) (string, error) {
 	} else {
 		r_value = "+" + pair.Value
 	}
-	return r_value, nil
+	return r_value + "\r\n", nil
 }
 
 func (r *Redis) Set(key string, value string, ttl string) (string, error) {
@@ -46,5 +46,5 @@ func (r *Redis) Set(key string, value string, ttl string) (string, error) {
 	}
 		
 	r.Storage[key] = utils.RedisPair{Value: value, Expiry: expiry}
-	return "+OK", nil
+	return "+OK" + "\r\n", nil
 }
