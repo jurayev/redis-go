@@ -56,7 +56,7 @@ func handleConnection(conn net.Conn, redis *redis.Redis) {
 		log.Printf("Received: %s", data)
 
 		command := str.ToLower(data[0])
-		var msg string 
+		var msg string = ""
 		switch command {
 		case "ping":
 			msg, _ = redis.Ping()
