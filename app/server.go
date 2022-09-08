@@ -22,18 +22,31 @@ func main() {
 	utils.CheckErr(err)
 	defer server.Close()
 
-	redis := redis.Redis{
-		Storage: map[string]utils.RedisPair{},
-	}
+	// redis := redis.Redis{
+	// 	Storage: map[string]utils.RedisPair{},
+	// }
 	for {
 		conn, err := server.Accept()
 		utils.CheckErr(err)
 		log.Printf("New incoming connection %s \n", conn.RemoteAddr().String())
-		go handleConnection(conn, &redis)
+		go handleConnection(conn)
 	}
 }
 
-func handleConnection(conn net.Conn, redis *redis.Redis) {
+func handleConnection(conn net.Conn) {
+	defer conn.Close()
+
+	for {
+		if _, err := conn.Read([]byte{}); err != nil {
+			fmt.Println("Error reading from client: ", err.Error())
+			continue
+		}
+
+		conn.Write([]byte("+PONG\r\n"))
+	}
+}
+
+func handleConnection1(conn net.Conn, redis *redis.Redis) {
 	defer conn.Close()
 
 	addr := conn.RemoteAddr().String()
