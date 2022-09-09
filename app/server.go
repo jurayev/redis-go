@@ -4,10 +4,10 @@ import (
 	redis "codecrafters-redis-go/redis"
 	parser "codecrafters-redis-go/parser"
 	utils "codecrafters-redis-go/utils"
+	str "strings"
 	"log"
 	"net"
 	"fmt"
-	str "strings"
 	"bufio"
 )
 const (
@@ -26,9 +26,7 @@ func main() {
 	}
 	defer server.Close()
 
-	redis := redis.Redis{
-		Storage: map[string]utils.RedisPair{},
-	}
+	redis := redis.NewRedis()
 	for {
 		conn, err := server.Accept()
 		utils.CheckErr(err)
@@ -36,7 +34,7 @@ func main() {
 			continue // ignore the broken connections
 		}
 		log.Printf("New incoming connection %s \n", conn.RemoteAddr().String())
-		go handleConnection(conn, &redis)
+		go handleConnection(conn, redis)
 	}
 }
 
