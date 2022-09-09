@@ -7,8 +7,3 @@ func CheckErr(err error) {
 		log.Println("WARNING :", err)
 	}
 }
-
-type RedisPair struct {
-	Value string
-	Expiry int
-}

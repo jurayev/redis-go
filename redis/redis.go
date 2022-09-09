@@ -6,9 +6,19 @@ import (
 	"time"
 )
 
+type RedisData struct {
+	Value string
+	Expiry int
+}
 
 type Redis struct {
-	Storage map[string]utils.RedisPair 
+	Storage map[string]RedisData 
+}
+
+func NewRedis() *Redis {
+	return &Redis{
+		Storage: map[string]RedisData{},
+	}
 }
 
 func (r *Redis) Ping() (string, error) {
@@ -45,6 +55,6 @@ func (r *Redis) Set(key string, value string, ttl string) (string, error) {
 		
 	}
 		
-	r.Storage[key] = utils.RedisPair{Value: value, Expiry: expiry}
+	r.Storage[key] = RedisData{Value: value, Expiry: expiry}
 	return "+OK" + "\r\n", nil
 }
