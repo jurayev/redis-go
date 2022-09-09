@@ -5,9 +5,6 @@ import (
 	"net"
 	"fmt"
 	str "strings"
-	_ "strconv"
-	_ "time"
-	_ "codecrafters-redis-go/parser"
 )
 
 const HOST = "127.0.0.1"
